@@ -4,6 +4,7 @@ import NotFoundPage from "./NotFoundPage";
 import { useState, useEffect } from "react";
 import VotesSection from "../components/VotesSection";
 import AddToonForm from "../components/AddToonForm";
+import EditToonForm from "../components/EditToonForm";
 
 const ToonDetailPage = ({ match }) => {
   const id = match.params.id;
@@ -13,6 +14,10 @@ const ToonDetailPage = ({ match }) => {
     firstName: "",
     lastName: "",
   });
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const toggleButtonState = (e) => setIsEditing((prev) => !prev);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,7 +67,14 @@ const ToonDetailPage = ({ match }) => {
           </tr>
         </tbody>
       </table>
-      <AddToonForm />
+      <button className="btn btn-success" onClick={toggleButtonState}>
+        {isEditing ? "Add" : "Edit"}
+      </button>
+      {isEditing ? (
+        <EditToonForm toonInfo={toonInfo} match={match} />
+      ) : (
+        <AddToonForm />
+      )}
     </React.Fragment>
   );
 };

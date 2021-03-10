@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const AddToonForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,8 +7,13 @@ const AddToonForm = () => {
   const [gender, setGender] = useState("");
   const [pictureUrl, setPictureUrl] = useState("");
   const [votes, setVotes] = useState(0);
+  const [pictures, setPictures] = useState([]);
+  const [hello, setHello] = useState("");
 
-  const addToon = async () => {
+  const addToon = async (e) => {
+    e.preventDefault();
+    console.log(gender, pictureUrl);
+
     const result = await fetch(
       `https://api4all.azurewebsites.net/api/people/`,
       {
@@ -28,6 +33,23 @@ const AddToonForm = () => {
     );
     const body = await result.json();
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetch(
+        `https://api4all.azurewebsites.net/api/pictures/`
+      );
+      const body = await result.json();
+      let picUrl = body.map((toon) => {
+        return {
+          value: toon.url,
+          display: toon.name,
+        };
+      });
+      setPictures(picUrl);
+    };
+    fetchData();
+  }, []);
 
   return (
     <React.Fragment>
@@ -76,13 +98,16 @@ const AddToonForm = () => {
           </div>
           <div className="form-group">
             <label>Picture URL:</label>
-            <input
-              className="form-control"
-              type="text"
-              placeholder="Picture URL"
+            <select
               value={pictureUrl}
               onChange={(event) => setPictureUrl(event.target.value)}
-            />
+            >
+              {pictures.map((pic) => (
+                <option key={pic.value} value={pic.value}>
+                  {pic.display}
+                </option>
+              ))}
+            </select>
           </div>
 
           <button onClick={() => addToon()} className="btn btn-success">
