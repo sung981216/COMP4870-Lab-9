@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const EditToonForm = ({ toonInfo, match }) => {
   const [firstName, setFirstName] = useState(toonInfo.firstName);
@@ -10,24 +11,28 @@ const EditToonForm = ({ toonInfo, match }) => {
 
   const id = match.params.id;
 
-  const editToon = async () => {
-    const result = await fetch(
-      `https://api4all.azurewebsites.net/api/people/`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          occupation,
-          gender,
-          pictureUrl,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+  const editToon = async (event) => {
+    event.preventDefault();
+    const body = JSON.stringify({
+      id,
+      lastName,
+      firstName,
+      occupation,
+      gender,
+      pictureUrl,
+    });
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const { data } = await axios.put(
+      `https://api4all.azurewebsites.net/api/people/${id}`,
+      body,
+      config
     );
-    const body = await result.json();
   };
 
   useEffect(() => {
@@ -66,7 +71,7 @@ const EditToonForm = ({ toonInfo, match }) => {
             className="form-control"
             type="text"
             placeholder="First Name"
-            defaultValue={toonInfo.firstName}
+            value={firstName}
             onChange={(event) => setFirstName(event.target.value)}
           />
         </div>
@@ -76,7 +81,7 @@ const EditToonForm = ({ toonInfo, match }) => {
             className="form-control"
             type="text"
             placeholder="Last Name"
-            defaultValue={toonInfo.lastName}
+            value={lastName}
             onChange={(event) => setLastName(event.target.value)}
           />
         </div>
@@ -86,7 +91,7 @@ const EditToonForm = ({ toonInfo, match }) => {
             className="form-control"
             type="text"
             placeholder="Occupation"
-            defaultValue={toonInfo.occupation}
+            value={occupation}
             onChange={(event) => setOccupation(event.target.value)}
           />
         </div>
@@ -96,29 +101,28 @@ const EditToonForm = ({ toonInfo, match }) => {
             className="form-control"
             type="text"
             placeholder="Gender"
-            defaultValue={toonInfo.gender}
+            value={gender}
             onChange={(event) => setGender(event.target.value)}
           />
         </div>
         <div className="form-group">
           <label>Picture URL:</label>
           <select
-            defaultValue={toonInfo.pictureUrl}
+            value={pictureUrl}
             onChange={(event) => setPictureUrl(event.target.value)}
           >
             {pictures.map((pic) => (
-              <option
-                key={pic.value}
-                value={pic.value}
-                selected={toonInfo.pictureUrl === pic.value}
-              >
+              <option key={pic.value} value={pic.value}>
                 {pic.display}
               </option>
             ))}
           </select>
         </div>
 
-        <button onClick={() => editToon()} className="btn btn-success">
+        <button
+          onClick={(event) => editToon(event)}
+          className="btn btn-success"
+        >
           Edit
         </button>
       </form>

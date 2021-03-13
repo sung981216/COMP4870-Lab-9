@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import VotesSection from "../components/VotesSection";
 import AddToonForm from "../components/AddToonForm";
 import EditToonForm from "../components/EditToonForm";
+import DeleteToon from "../components/DeleteToon";
 
 const ToonDetailPage = ({ match }) => {
   const id = match.params.id;
@@ -75,6 +76,8 @@ const ToonDetailPage = ({ match }) => {
       ) : (
         <AddToonForm />
       )}
+
+      <DeleteToon match={match} />
     </React.Fragment>
   );
 };
